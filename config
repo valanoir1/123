@@ -1,0 +1,840 @@
+COMPARATOR
+
+import java.io.*;
+import java.util.*;
+class Student {
+int rollno;
+String name;
+float fees;
+String branch;
+int year;
+int sem;
+int age;
+static String clg;
+public Student(int rollno,String name,float fees,String branch,int year,int sem,int age) {
+this.rollno = rollno;
+this.name = name;
+this.fees = fees;
+this.branch = branch;
+this.year = year;
+this.sem = sem;
+this.age = age;
+clg="PU";
+}
+@Override
+public String toString() {
+return rollno + " "+ name + " " + fees + " " + branch + " " + year + sem + " " + age + " " + clg + "\n";
+}
+}
+class AgeComparator implements Comparator { 
+public int compare(Object o1,Object o2){ 
+Student s1=(Student)o1; 
+Student s2=(Student)o2; 
+if(s1.age==s2.age) 
+return 0; 
+else if(s1.age>s2.age) 
+return 1; 
+else 
+return -1; 
+} 
+} 
+class NameComparator implements Comparator{ 
+public int compare(Object o1,Object o2){ 
+Student s1=(Student)o1; 
+Student s2=(Student)o2; 
+return s1.name.compareTo(s2.name); 
+} 
+} 
+class FeesComparator implements Comparator { 
+public int compare(Object o1,Object o2){ 
+Student s1=(Student)o1; 
+Student s2=(Student)o2; 
+if(s1.fees==s2.fees) 
+return 0; 
+else if(s1.fees>s2.fees) 
+return 1; 
+else 
+return -1; 
+} 
+} 
+public class Temp1 {
+public static void main(String[] args) {
+// TODO Auto-generated method stub
+ArrayList sl=new ArrayList(); 
+sl.add(new Student(1,"Shiva",10000.00f,"cse",1,1,18)); 
+sl.add(new Student(2,"Venky",15000.00f,"ise",1,2,20)); 
+sl.add(new Student(3,"Jesus",17000.00f,"ece",1,1,19)); 
+sl.add(new Student(3,"Alla",12000.00f,"eee",1,1,19)); 
+sl.add(new Student(3,"Budha",11000.00f,"mech",1,1,21));
+System.out.println("Sorting by Name"); 
+System.out.println("_______________"); 
+Collections.sort(sl,new NameComparator()); 
+Iterator itr=sl.iterator(); 
+while(itr.hasNext()){ 
+Student st=(Student)itr.next(); 
+System.out.println(st.rollno+" "+st.name+" "+ st.fees+ " " + st.branch+ " " + st.year + " " + st.sem + " " + st.age + " " + Student.clg); 
+} 
+System.out.println("Sorting by age"); 
+System.out.println("______________"); 
+Collections.sort(sl,new AgeComparator()); 
+Iterator itr2=sl.iterator(); 
+while(itr2.hasNext()){ 
+Student st=(Student)itr2.next(); 
+System.out.println(st.rollno+" "+st.name+" "+ st.fees+ " " + st.branch+ " " + st.year + " " + st.sem + " " + st.age + " " + Student.clg); 
+} 
+System.out.println("Sorting by fees"); 
+System.out.println("______________"); 
+Collections.sort(sl,new FeesComparator()); 
+Iterator itr1=sl.iterator(); 
+while(itr1.hasNext()){ 
+Student st=(Student)itr1.next(); 
+System.out.println(st.rollno+" "+st.name+" "+ st.fees+ " " + st.branch+ " " + st.year + " " + st.sem + " " + st.age + " " + Student.clg); 
+} 
+}
+}
+
+
+DATABASE MYSQL 
+
+Table creation:
+CREATE TABLE emp(  
+    eno int NOT NULL ,  
+    name varchar(45) NOT NULL,  
+    age int NOT NULL,  
+    PRIMARY KEY (eno)  
+);  
+import java.sql.*;
+import java.util.*;
+
+public class temp2 {
+public static void main(String[] args) {
+		try{  
+			Class.forName("com.mysql.jdbc.Driver");  
+			Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/god?characterEncoding=latin1","root","admin123");  
+			Statement stmt=con.createStatement(); 
+                        int ans=1;
+                        do {
+                            System.out.println("1. Insert a record ");
+                            System.out.println("2. Delete a record ");
+                            System.out.println("3. Modify/Edit a record ");
+                            System.out.println("4. Display list of records ");
+                            Scanner sc = new Scanner(System.in);
+                            System.out.println("Enter your choice:");
+                            int ch = sc.nextInt();
+                            String ename;
+                            int eno,age;
+                            String query="";
+                           
+                            switch(ch) {
+                               case 1:
+                                   System.out.println("Enter employee number:");
+                                   eno = sc.nextInt();
+                                   System.out.println("Enter employee name:");
+                                   ename = sc.next();
+                                   System.out.println("Enter employee age:");
+                                   age = sc.nextInt();
+                                   query = "INSERT INTO emp " + "VALUES (" + eno+ ",'" + ename+"',"+ age+")";
+                                   stmt.executeUpdate(query);
+                                   break;
+                               case 2:
+                                   System.out.println("Enter employee number:");
+                                   eno = sc.nextInt();
+                                   query = "delete from  emp where eno='"+eno+"'";
+                                   stmt.executeUpdate(query);
+                                   System.out.println("Record is deleted from the table successfully..................");
+                                   break;
+                               case 3:
+                                   PreparedStatement ps = null;
+                                   query = "update emp set name=? where eno=? ";
+                                   ps = con.prepareStatement(query);
+                                   System.out.println("Enter employee number:");
+                                   eno = sc.nextInt();
+                                   System.out.println("Enter employee name:");
+                                   ename = sc.next();
+                                   ps.setString(1, ename);
+                                   ps.setInt(2, eno);
+                                   ps.executeUpdate();
+                                   System.out.println("Record is updated successfully......");                        
+                                   break;
+                               case 4:
+                                   ResultSet rs=stmt.executeQuery("select * from emp");  
+			           while(rs.next())  
+			              System.out.println(rs.getInt(1)+"  "+rs.getString(2)+"  "+rs.getInt(3));  
+                               }
+                               System.out.println("Enter another(1/0)");
+                               ans = sc.nextInt();
+                          }while(ans==1);    
+			
+			con.close();  
+		}catch(Exception e){ System.out.println(e);}  
+	}  
+}
+
+
+
+HIBERNATE
+
+package com.pu.test123;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+public class Student {
+	@Id
+	private int roll;
+	private String name;
+	private int marks;
+	public int getRoll() {
+		return roll;
+	}
+	public void setRoll(int roll) {
+		this.roll = roll;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getMarks() {
+		return marks;
+	}
+	public void setMarks(int marks) {
+		this.marks = marks;
+	}
+	
+
+}
+
+Hibernate.cfg.xml
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+ 
+<hibernate-configuration>
+<session-factory>
+<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/god?characterEncoding=latin1</property>
+<property name="hibernate.connection.username">root</property>
+<property name="hibernate.connection.password">admin123</property>
+<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+<property name="show_sql">true</property>
+<property name="format_sql">true</property>
+<property name="hbm2ddl.auto">update </property>
+<mapping resource="com.pu.student.hbm.xml" />
+</session-factory>
+</hibernate-configuration>
+
+App.java
+package com.pu.test123;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+/**
+ * Hello world!
+ *
+ */
+public class App 
+{
+    public static void main( String[] args )
+    {
+       Student student = new Student();
+       student.setRoll(1);
+       student.setName("god");
+       student.setMarks(100);
+    		
+       Configuration configuration=new Configuration().configure().addAnnotatedClass(Student.class);
+       //2. create Session Factroy object 
+       SessionFactory sessionFactory=configuration.buildSessionFactory();
+       //3. Create Session object
+       Session session=sessionFactory.openSession();
+       //4. Begin your transaction
+       Transaction transaction=session.beginTransaction();
+       //5.Save your object to database
+       session.save(student);
+       //6/ Commit your transaction 
+       transaction.commit();
+       session.close();
+       sessionFactory.close();
+    }
+}
+
+
+Problem statement  : Spring application
+Student.java
+
+package com.pu;
+
+public class Student {
+	private String name;  
+	  
+	public String getName() {  
+	    return name;  
+	}  
+	  
+	public void setName(String name) {  
+	    this.name = name;  
+	}  
+	  
+	public void displayInfo(){  
+	    System.out.println("Hello: "+name);  
+	}  
+}
+
+applicationContext.xml
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans  
+    xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:p="http://www.springframework.org/schema/p"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+               http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">  
+  
+<bean id="studentbean" class="com.pu.Student">  
+<property name="name" value="God Bless You"></property>  
+</bean>  
+  
+</beans>  
+
+
+
+Test.java
+package com.pu;
+
+import org.springframework.beans.factory.BeanFactory;  
+import org.springframework.beans.factory.xml.XmlBeanFactory;  
+import org.springframework.core.io.ClassPathResource;  
+import org.springframework.core.io.Resource;  
+
+public class Test {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Resource resource=new ClassPathResource("applicationContext.xml");  
+	    BeanFactory factory=new XmlBeanFactory(resource);  
+	      
+	    Student student=(Student)factory.getBean("studentbean");  
+	    student.displayInfo();
+	}
+
+}
+
+
+JSP 
+Step 1: Create a table Employee.
+Code:
+CREATE TABLE EMPLOYEE (ENO  INT, NAME VARCHAR(45) , GENDER VARCHAR(1), DEPARTMENT VARCHAR(45) DEFAULT NULL, SALARY INT,PRIMARY KEY (`ENO`)) 
+Step 2: Create an HTML Page (index.html)
+Code:
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<form action="insertData.jsp" method="get">
+<label>Employee Number:</label>
+<input type="text" name="eno"><br>
+<label>Employee Name:</label>
+<input type="text" name="ename"><br>
+<label>Employee Gender:</label>
+<input type="text" name="egender"><br>
+<label>Employee Department:</label>
+<input type="text" name="edept"><br>
+<label>Employee salary:</label>
+<input type="text" name="esalary"><br>
+<input type="submit">
+</form>
+</body>
+</html>
+
+Step 3: Add external jar to classpath ( servlet-api.jar, mysql-connector-j-8.0.32.jar)
+Step 4: create jsp file (insertData.jsp)
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<%@ page import = "java.io.*,java.util.*,java.sql.*"%>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<%
+int uq=0;
+Class.forName("com.mysql.jdbc.Driver"); 
+Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/demo","root","Pavan@1989");
+PreparedStatement pstatement = con.prepareStatement("INSERT INTO employee VALUES(?, ?, ?, ?, ?)");
+pstatement.setInt(1, Integer.valueOf(request.getParameter("eno")));
+pstatement.setString(2, request.getParameter("ename"));
+pstatement.setString(3, request.getParameter("egender"));
+pstatement.setString(4, request.getParameter("edept"));
+pstatement.setFloat(5, Integer.valueOf(request.getParameter("esalary")));
+uq=pstatement.executeUpdate();
+pstatement.close();
+
+if(uq!=0)
+{
+	out.print("<h1>Data inserted sucessfully </h1>");
+}
+Statement st = con.createStatement();
+ResultSet rs = st.executeQuery("select * from employee");
+%>
+<table>
+<tr>
+	<th>ENO</th>
+	<th>ENAME</th>
+	<th>GENDER</th>
+	<th>DEPARTMENT</th>
+	<th>SALARY</th>
+</tr>
+<%
+while(rs.next())
+{
+%>
+<tr>
+	<td><%=rs.getInt(1) %></td>
+	<td><%=rs.getString(2)%></td>
+	<td><%=rs.getString(3)%></td>
+	<td><%=rs.getString(4)%></td>
+	<td><%=rs.getInt(5) %></td>
+</tr>
+<%
+}
+%>
+</table>
+
+</body>
+</html>
+
+
+
+
+MVC
+
+Step 1: Create a login page to read the username and password ( index. jsp)
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+ pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Login Page</title>
+</head>
+<body>
+<h1>LOGIN</h1>
+<form action="UserControler" method="post">
+<label>User Name:</label><input type="text" name="userName"><br>
+<label>Password:</label><input type="password" name="password"><br>
+<input type="submit">
+</form>
+<%if(request.getAttribute("error")!=null){ %>
+<p><%=request.getAttribute("error") %></p>
+<%} %>
+</body>
+</html>
+
+
+Step 2: Create bean class “User”
+package model;
+public class User
+{
+String userName;
+String Password;
+public String getUserName() {
+return userName;
+}
+public void setUserName(String userName) {
+this.userName = userName;
+}
+public String getPassword() {
+return Password;
+}
+public void setPassword(String password) {
+Password = password;
+}
+public boolean isValid()
+{
+if(userName.equals("admin")&&Password.equals("123"))
+{
+return true;
+}
+else
+{
+return false;
+}
+}
+}
+Step 3: Create a servlet to validate the user
+1. Create a package “controller”.
+2. Create a servlet “UserControler” inside the “controller” package
+package controler;
+import java.io.IOException;
+import com.mysql.cj.Session;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import model.User;
+public class UserControler extends HttpServlet {
+private static final long serialVersionUID = 1L;
+protected void doPost(HttpServletRequest request, HttpServletResponse
+response) throws ServletException, IOException
+{
+//Step 1: Get the user name and password
+String userName=request.getParameter("userName");
+String password=request.getParameter("password");
+//Step 2: create a bean object and validate it
+User user=new User();
+user.setUserName(userName);
+user.setPassword(password);
+if(user.isValid())
+{
+HttpSession session=request.getSession();
+session.setAttribute("userName", userName);
+response.sendRedirect("home.jsp");
+}
+else
+{
+RequestDispatcher
+rd=request.getRequestDispatcher("index.jsp");
+request.setAttribute("error","Username or password is
+not correct");
+ rd.forward(request, response);
+}
+}
+}
+Step 4: Create a home page for a valid user (home.jsp)
+<%@ page language="java" contentType="text/html;
+charset=ISO-8859-1"
+ pageEncoding="ISO-8859-1"%>
+<%@ page import="jakarta.servlet.http.HttpSession" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Home</title>
+</head>
+<body>
+<% if(session.getAttribute("userName")!=null){%>
+<form action="Logout" method="post">
+<input type="submit" value="Logout">
+</form>
+<p>well Come <%=session.getAttribute("userName") %>
+<%}
+else
+{
+response.sendRedirect("index.jsp");
+}%>
+</body>
+</html>
+Step 5: create “Logout” Servlet
+package controler;
+import java.io.IOException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+public class Logout extends HttpServlet {
+private static final long serialVersionUID = 1L;
+protected void doPost(HttpServletRequest request, HttpServletResponse
+response) throws ServletException, IOException {
+HttpSession session=request.getSession();
+session.removeAttribute("userName");
+response.sendRedirect("index.jsp");
+}
+}
+Step 5: Web.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" id="WebApp_ID"
+version="4.0">
+ <display-name>DemoMVC</display-name>
+ <welcome-file-list>
+ <welcome-file>index.html</welcome-file>
+ <welcome-file>index.jsp</welcome-file>
+ <welcome-file>index.htm</welcome-file>
+ <welcome-file>default.html</welcome-file>
+ <welcome-file>default.jsp</welcome-file>
+ <welcome-file>default.htm</welcome-file>
+ </welcome-file-list>
+ <servlet>
+ <servlet-name>UserControler</servlet-name>
+ <servlet-class>controler.UserControler</servlet-class>
+ </servlet>
+ <servlet-mapping>
+ <servlet-name>UserControler</servlet-name>
+ <url-pattern>/UserControler</url-pattern>
+ </servlet-mapping>
+
+ <servlet>
+ <servlet-name>Logout</servlet-name>
+ <servlet-class>controler.Logout</servlet-class>
+ </servlet>
+ <servlet-mapping>
+ <servlet-name>Logout</servlet-name>
+ <url-pattern>/Logout</url-pattern>
+ </servlet-mapping>
+</web-app>
+
+PART A AND B
+
+1.	Define stream.
+Defined as a sequence of data. 2 types inputStream ,outputStream
+ByteStreams(8bit bytes,FileInputStream and fileOutputStreams) and 
+CharacterStreams(16bit Unicode,fileReader and fileWriter)
+2.	List three streams for java IO.
+1)System.out
+2)System.in
+3)System.err
+3.	Write a java program to read/write a text file
+READ
+Try{
+fileInputStream fin=new FileInputStream(“path”);
+int i=0;
+while((i=fin.read())!=1){
+sys.out((char));
+fin.close();
+}
+Catch(Exception e){sys.out(e);}
+WRITE
+Try{
+fileOutputStream fout=new FileOutputStream(“path”);
+String s=”String”;
+Byte b[]=s.getBytes();
+Fout.write(b);
+Fout.close();
+Sys.out(“success”);
+}
+Catch(Exception e){sys.out(e);}
+4.	Define serialization and deserialization.
+Serialization a mechanism of writing the state of an object into a byte-stream. It is mainly used in Hibernate, RMI, JPA, EJB and JMS technologies.
+Deserialization The reverse operation of serialization is called deserialization where byte-stream is converted into an object
+5.	List advantages of generics.
+Type-safety: We can hold only a single type of objects in generics. It doesn?t allow to store other objects.
+Type casting is not required: There is no need to typecast the object.
+Compile-Time Checking: It is checked at compile time so problem will not occur at runtime. The good programming strategy says it is far better to handle the problem at compile time than runtime.
+6.	Distinguish between ArrayList and Vector.
+ 
+
+
+
+
+
+
+
+7.	Difference between HashSet and HashTree.
+ 
+8.	Distinguish between Iterator and Enumeration.
+ 
+
+
+
+9.	What is meant by annotation?2cS113
+Java annotation is a tag
+Represents the metadata i.e attached with class,interface,methods or fields to indicate some additional information which can be used by java compiler and jvm
+10.	Name some built in annotations.2cS114
+@override
+@suppressWarnings
+@deprecated
+@target
+@retention
+@inherited
+@documented
+
+11.	What is Lambda expression?2cS131
+Provides a clear and concise way to represent one method interface using an expression
+Very useful in collection library it helps to iterate ,filter and extract data from collection
+
+Part B
+1.	Describe the I/O classes in java. M1/2bS6,2bS8 
+
+ 
+
+
+
+2.	Briefly explain different types of JDBC drivers.2c152-156.
+Jdbc driver is a s/w component that enables java application to interact with database
+4types
+•	Jdbc-odbc bridge driveruses odbc driver to connect to the database.the jdbc-odbc bridge driver converts the jdbc method calls into the odbc function calls.this is not discoraged coz of thin driver
+•	Native api drivernative api driver uses the client side libraries of the database the driver converts jdbc method calls into native calls of the database api not written entirely in java.
+•	Network protocol drivernetwork protocol driver uses middle ware that converts jddbc calls directly or indirectly into the vendor specific database protocol.fully written in java
+•	Thin driverthe thin driver converts jdbc calls directly into the vendor specific database protocol. That is why it is known as thin driver
+3.	Demonstrate Generic method and class with example.2cS
+4.	Illustrate Collection and collection framework.2cS20-21
+Collection represents a single unit of objects 
+It provides readymade architecture
+Collection framework represents a unified architecture for storing and manipulation a group of objects it has interfaces and its implementation,algorithms
+ 
+5.	Briefly describe about Annotations and its types with example.2cS119-122
+•	Marker annotationannotation that has no methods @interface myannotation{},@override,@depricated
+•	Single value annotation annotation that has one method @interface myannotation{int value();}
+•	Multivalue annotation annotation that has more than one method @interface myannotation{int value1(); string value2(); string value3();}
+6.	Explain about Lambda expression and its uses.2cS131-134
+Provides a clear and concise way to represent one method interface using an expression
+Very useful in collection library it helps to iterate filter and extract data from collection
+Lambda expression is used to provide the implementation of interface which has functional interface saves lot of coding
+Usesto provide the implementation of functional interface,less coding
+Module 2
+Part A
+1.	Define Servlet.M2/2aS5
+Servlet is a technology used to create a web app
+Servlet is an api 
+Servlet is an interface 
+Servlet is a class that extends the capabilities of servers 
+Servlet is a web component that is deployed on a server to create dynamic web page
+
+2.	List the advantages of servlet.2aS10
+Better performancecreate thread not process
+Portabilityuses java lang
+Robustjvm manages servlet so no memory leak
+Secureuses java lang
+3.	Define session and  cookies.2aS84,2aS102
+Cookiesmall piece of info that is persisted btw the multiple client requests.cookie has a name,value and optional attributes i.e path domain max age etc
+Sessioncontainer creates a session id for each user.the container uses this id to identify the particular used.performs 2 tasks 1)bind objects 2)view and manipulate info about session 
+4.	Outline the advantages of JSP over servlet. 2bS4
+Extension to servletjsp is the extension to servlet.can use all features of servlet in jsp
+Easy to maintaineasily manageable coz v can separate business logic with presentation logic
+Fast Developmentno need to recompile and redeploy wen jsp is modified
+Less code than servletv can use many tags such as action tags,jstl,custom tags etc
+5.	List the three types of scripting elements in Jsp.2bS12
+Scriptlet tag
+Expression tag
+Declaration tag
+6.	List out the JSP directives.2bS26
+Are messages that tells the web container how to translate a jsp page into the corresponding servlet
+3 types
+Page directive 
+Include directive
+Taglib directive
+7.	Define java bean.2bS40
+Java beans is a java class that shld follow : 
+It shld have a no arg constructor
+It shld be serializable
+It shld provide methods to set and get the values of properties (getter and setter methods)
+Advantages:
+Javabean properties and methods can be exposed to another application
+It provides an easiness to reuse the s/w components
+Disadvantages:
+Javabeans are mutable
+Creating the setter and getter methods for each property separately may lead to the boilerplate code
+8.	Name some JSTL core tags.2bS48
+C:out
+C:import
+C:set
+C:remove
+C:catch
+9.	Name some JSTL function tags.2bS61
+Fn:contains()
+Fn:endsWith()
+Fn:indexOf()
+Fn:startsWith()
+Fn:trim()
+10.	Outline the advantages of MVC.2cS3
+Navigation control is centralized
+Easy to maintain the large application
+ 
+
+Part B
+1.	Explain the Servlet Life Cyle and its architecture.2aS48-49
+The web container maintains the life cycle of a servlet instance.
+Servlet class is loaded
+Servlet instance is created
+Init method is invoked
+Service method is invoked
+Destroy method is invoked
+2.	Illustrate the Session tracking techniques.2aS83,84,94,97,102
+4 techniques1)cookies 2)hidden form field 3)url rewriting 4)httpsession
+Cookiessmall piece of info that persisted btw the multiple client requests
+Cookie has a name,vaue,and optional attributes(path,comment etc)
+ 
+Hidden fieldwidely used in comment form of website.stores page id or page name in hidden field so that each page can be uniquely identified
+url rewritingwe append a token or identifier to the url of the next servlet or the next resource we can send the parameter name/value pairs Eg:url?name1=value&name2=value2…..
+http sessioncontainer creates a session id for each user.the container uses this id to identify the particular user
+  
+3.	Explain JSP implicit objects. 2bS16
+9 implicit objects.created by container that are available to all jsp pages
+Out(for writing any data to buffer[out.println(“asd”)])
+Request(used to get request info such as parameter header info,remote addr etc)
+Response(used to add or manipulate response such as redirect response to another resource,send error etc)
+Config(used to get initialization parameter from the web.xml file)
+Application(used to get initialization parameter from config file)
+Session(used to set ,get or remove attribute or to get session info)
+pageContext(used to set get or remove attribute from one of the scopes i.e request session application)
+page(an implicit object of type object class)
+exception(used to print the exception)
+
+4.	Brief about JSP directives.2bS26-
+Messages that tells the web container how to translate a jsp page into corresponding servlet
+4 typespage directive,include directice,taglib directive
+Page directivedefined attributes that apply to an entire jsp page
+		<%@page attribute=”vvalue”%>
+Include directiveused to include the contents of any resources it may be a jsp file,html,or text.
+		<%@include file=”resource”%>
+Taglib directiveused to define a tag library that defines many tags 
+		<%@taglib url=”url of library” prefix=”prefix of tag library”%>
+
+
+
+
+5.	Outline 5 types of JSTL tags.2bS47
+ 
+6.	Illustrate MVC architecture with neat diagram.2cS3-4
+ 
+MVC stands for model view and controller.
+It is a design pattern that separated the business logic,presentation logic and data
+Controller acts as an interface between view and model it intercepts the incoming requests
+Model represents the state of application i.e data
+View represents the presentation i.e UI
+Module 5
+Part B
+1.	Describe Maven project and it advantages . M5/S3,S4,S5,S7
+•	Maven is a powerful project management tool that is based on project object model(POM).
+•	Used for project build,dependency and documentation
+•	Simplifies the build process like ANT,but it is advanced than ANT
+Problems without maven:
+1)adding set of jars in each project(just add dependencies)
+2)creating the right project structure(structure of servlet etc shld be done correctly or it wont execute)
+3)building and deploying (hv to do it manually without maven)
+2.	Discuss different types of Maven repository .S17
+•	Maven repo is a directory of packaged jar files with pom.xml file
+•	Maven searches the dependencies in the repo 
+3 types
+Local repo
+Central repo
+Remote repo
+ 
+Searches in local 1st then central then remote if not found in any throws an error
+3.	Explain Maven directory structure. S27
+ 
+
+
+
+4.	Describe Selenium feature and limitations, Tool suite.S51,S52,S53.
+•	Selenium is an open source and portable web testing framework
+•	Selenium ide provides a playback and record feature for authorising tests without the need to learn a test scripting language
+•	Selenium supports various OS,browsers and prog lang
+•	Supports parallel test execution which reduces time and increases efficiency
+•	Can be integrated with framewords like ANT and Maven
+•	Requires fewer resources as compared to other automation test tools
+•	Selenium commands are categorized in terms of diff classes which makes it easier to understand and implement
+
+Part C (Lab programs)
+1.	Serialization and Deserialization – Lab Sheet1
+2.	Comparator – Lab Sheet 1
+3.	Console app with MySQL database. – Lab Sheet1
+4.	Servlet with MySQL database – Lab Sheet 2
+5.	JSP with MySQL database – Lab Sheet 3 
+6.	MVC – Lab Sheet4
+7.	Hibernate – Lab Sheet5
